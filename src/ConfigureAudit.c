@@ -9,6 +9,7 @@
  /**
   * accesses auditPipe and configures audit_control file 
   */
+
 FILE* ConfigureAudit(){
 
     //make sure we are in root
@@ -34,28 +35,8 @@ FILE* ConfigureAudit(){
     //using descriptor in order to use ioctl system calls
     auditFileDescriptor = fileno(auditTrailFile);
 
-    //getters
-    
-    //ioctl returns zero if successful
-    int queueMin = ioctl(auditFileDescriptor, AUDITPIPE_GET_QLIMIT_MIN, &queueMin);
-    if (queueMin == -1) {
-        fprintf(stderr, "Error: cannot get min length of audit queue\n");
-        exit(1);
-    }
-
-    int queueMax = ioctl(auditFileDescriptor, AUDITPIPE_GET_QLIMIT_MAX, &queueMax);
-    if (queueMax== -1) {
-        fprintf(stderr, "Error: cannot get max length of audit queue\n");
-        exit(1);
-    }
-
-    int maxAuditData = ioctl(auditFileDescriptor, AUDITPIPE_GET_MAXAUDITDATA, &maxAuditData);
-    if (queueMax== -1) {
-        fprintf(stderr, "Error: cannot get max amount of audit data\n");
-        exit(1);
-    }
-
     //setters
+    //ioctl returns zero if successful
 
     //audit only local events so we can use preset flags
     int mode = AUDITPIPE_PRESELECT_MODE_LOCAL;
@@ -65,15 +46,16 @@ FILE* ConfigureAudit(){
     }
 
     //configure audit control file
-    u_int attributableEvents, nonAttributableEvents = auditFlags;
+    u_int attributableEvents = auditFlags;
+    u_int nonAttributableEvents = auditFlags;
 
-    int attEvents = ioctl(auditFileDescriptor, AUDITPIPE_GET_MAXAUDITDATA, &attEvents);
+    int attEvents = ioctl(auditFileDescriptor, AUDITPIPE_SET_PRESELECT_FLAGS, &attributableEvents);
     if (attEvents== -1) {
         fprintf(stderr, "Error: cannot set attributable events\n");
         exit(1);
     }
 
-    int nonAttEvents = ioctl(auditFileDescriptor, AUDITPIPE_GET_MAXAUDITDATA, &nonAttEvents);
+    int nonAttEvents = ioctl(auditFileDescriptor, AUDITPIPE_SET_PRESELECT_NAFLAGS, nonAttributableEvents);
     if (nonAttEvents== -1) {
         fprintf(stderr, "Error: cannot set Non-attributable events\n");
         exit(1);

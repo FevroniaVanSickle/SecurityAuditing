@@ -1,5 +1,6 @@
 #include <stdio.h>
-#include "ConfigureAudit.h"
+#include "ConfigureAudit.c"
+#include "Parser.c"
 
 int main(int argc, char *argv[]){
     //optionally call tests
