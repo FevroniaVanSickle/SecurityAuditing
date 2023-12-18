@@ -9,4 +9,13 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-int ConfigureAudit(int argc, char *argv[]);
+FILE* ConfigureAudit();
+
+bool userID(){
+        uid_t userID = geteuid();
+        if (userID != 0) {
+            return false;
+        }
+            return true;
+    }
+
