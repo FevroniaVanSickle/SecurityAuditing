@@ -1,29 +1,27 @@
-This program accesses the audit pipe on MacOS and prints warnings if files are created or deleted. 
+This program accesses the audit pipe on MacOS and prints output of audit log
 
 In order to run this program you must:
 * be running MacOS Ventura or have downloaded Auditd separately 
 * run the program as the root user. This is best accomplished by using sudo after compiling
+* follow the steps below for compiling 
 
-The program is currently set up to notify users of file deletion or file creation. 
+The program is currently set up to notify users audited events. 
 Instructions for use:
-1. compile the main file
-2. run the main file with sudo
-3. once program is running, create a new file
-4. a warning will be printed that a file has been created
-5. with program still running, delete a file
-6. a warning will be printed that a file has been deleted
-7. exit the program and/or reset your audit_control file
-
-After you are done running the program you may want to reset your audit control file to normal so as to not affect computer performance. 
-
-Instructions to reset audit control file: 
+1. compile the main file with: gcc -w -o main Main.c -lbsm
+2. run the main file with sudo: sudo ./main
+3. once program is running, click on objects or create files
+6. Event logs will be printed to the console
+7. Logs will continue to be printed as long as the program is running. 
+7. Exit the program 
 
 acknowledgements:
-inspiration for userID method from @santoru
-inspiration for tapping into auditpipe from @SPADE
+inspiration for userID method from @santoru on github
+inspiration for processing audit tokens from @ashish-gehani on github 
 
-runs 
-Test.py
+notes about warnings:
+Compiling main produces errors about the deprecation of BSM library functions. This is expected, as the program works with deprecated source code due to Auditd itself being deprecated. 
+
+Src includes
 ConfigureAudit.c
 Parser.c
-ResetAuditFile.c
+

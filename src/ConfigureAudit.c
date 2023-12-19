@@ -9,7 +9,6 @@
  /**
   * accesses auditPipe and configures audit_control file 
   */
-
 FILE* ConfigureAudit(){
 
     //make sure we are in root
@@ -55,10 +54,11 @@ FILE* ConfigureAudit(){
         exit(1);
     }
 
-    int nonAttEvents = ioctl(auditFileDescriptor, AUDITPIPE_SET_PRESELECT_NAFLAGS, nonAttributableEvents);
+    int nonAttEvents = ioctl(auditFileDescriptor, AUDITPIPE_SET_PRESELECT_NAFLAGS, &nonAttributableEvents);
     if (nonAttEvents== -1) {
         fprintf(stderr, "Error: cannot set Non-attributable events\n");
         exit(1);
     }
-    return auditTrailFile;
+
+    return(auditTrailFile);
 }

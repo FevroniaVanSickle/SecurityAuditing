@@ -1,26 +1,73 @@
 #include "Parser.h"
+/**
+ * Processes output from audit pipe user
+ * @author Fevronia Van Sickle 
+ * @version 12/19
+ */
+
 
 /**
  * take in events from audit pipe and print out results
 */
 void Parser(FILE* auditFile){
 
-    //read an event record from a file descriptor and put the content in the buffer buf 
-    //passed as parameter (which must be freed after use). 
-    //The function return the number of bytes read.
-    int au_read_rec(FILE *fp, u_char **buf);
 
-    //To read the buffer with the record inside we have to fetch every token on it sequentially, 
-    //using the au_fetch_tok
-    int au_fetch_tok(tokenstr_t *tok, u_char *buf, int len);
+    //code for processing audit tokens from @ashish-gehani on github 
 
-    //we have a token, we can print it on a file descriptor
-    void au_print_tok(FILE *outfp, tokenstr_t *tok, char *del, char raw, char sfrm);
+    FILE* output = stdout;
+    FILE* errors = stderr;
+    char* delimiter = ",";
+    int raw = 1; // Convert raw to string
+    int shortForm = 1; // Use short form
+    u_char* buffer;
+    int remainingRecords = 1;
+    int recordLength;
+    int recordBalance;
+    int processedLength;
+    int tokenCount;
+    int fetchToken;
+    tokenstr_t token;
 
-    //special way of printing flags that will take an additional parameter
-    void au_print_flags_tok(FILE *outfp, tokenstr_t *tok, char *del, int oflags);
+    //continues to print out audit tokens while there are still tokens to print
+    //will continue until user halts the program
+    while (remainingRecords) {
 
-    //print out tokens in file 
+        // Read an audit record
+        recordLength = au_read_rec(auditFile, &buffer);
+        if (recordLength == -1) {
+            remainingRecords = 0;
+            break;
+        }
 
-    //print out warning 
+        recordBalance = recordLength;
+        processedLength = 0;
+        tokenCount = 0;
+
+        while (recordBalance) {
+
+            // Extract a token from the record
+            fetchToken = au_fetch_tok(&token, buffer + processedLength, recordBalance);
+
+            if (fetchToken == -1) {
+                // fprintf(errors, "Error fetching token.\n");
+                break;
+            }
+
+            // Print the long form of the token as a string
+            au_print_tok(output, &token, delimiter, raw, shortForm);
+            fprintf(output, "\n");
+
+            tokenCount++;
+            processedLength += token.len;
+            recordBalance -= token.len;
+        }
+
+        free(buffer);
+        // fprintf(output, "\n");
+    }
+
+    fclose(auditFile);
+    fprintf(output, "Provenance collection has ended.\n");
+
+    
 }

@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "*.embeddedhtml": "html",
-        "configureaudit.h": "c"
+        "configureaudit.h": "c",
+        "audit_kevents.h": "c",
+        "libbsm.h": "c",
+        "encoding.h": "c"
     }
 }

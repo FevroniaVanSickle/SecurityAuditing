@@ -8,5 +8,8 @@
 #include <security/audit/audit_ioctl.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <libxml/encoding.h>
+
 
 void Parser(FILE* auditFile);
+struct auditEvent getEvent(FILE* auditFile);

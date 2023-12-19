@@ -9,8 +9,10 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+
 FILE* ConfigureAudit();
 
+//taken from from @santoru on github
 bool userID(){
         uid_t userID = geteuid();
         if (userID != 0) {
@@ -18,4 +20,5 @@ bool userID(){
         }
             return true;
     }
+
 
